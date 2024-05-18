@@ -52,6 +52,11 @@ $Results.places | ForEach-Object {
   $PriceLevel = $_.priceLevel
   $Vicinity = $_.formattedAddress
   $OpenNow = $_.currentOpeningHours.openNow
+  $Coffee = $_.servesCoffee
+  $Breakfast = $_.servesBreakfast
+  $Lunch = $_.servesLunch
+  $Dinner = $_.servesDinner
+  $Sports = $_.goodForWatchingSports
   $Phone = $_.internationalPhoneNumber
   $Website = $_.websiteUri
   $GoogleMaps = $_.googleMapsUri 
@@ -64,6 +69,11 @@ $Results.places | ForEach-Object {
   Write-Host "Price Level: $PriceLevel"
   Write-Host "Address: $Vicinity"
   Write-Host "Open Now: $OpenNow"
+  Write-Host "Serves Coffee: $Coffee"
+  Write-Host "Serves Breakfast: $Breakfast"
+  Write-Host "Serves Lunch: $Lunch"
+  Write-Host "Serves Dinner: $Dinner"
+  Write-Host "Good for Watching Sports: $Sports"
   Write-Host "Phone: $Phone"
   Write-Host "Website: $Website"
   Write-Host "Google Maps: $GoogleMaps"
