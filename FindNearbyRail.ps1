@@ -3,7 +3,7 @@
 # - A valid Google Maps Places API key (stored in an environment variable) --> [System.Environment]::SetEnvironmentVariable('GOOGLE_PLACES_API_KEY','YOUR_API_KEY')
 # - The 'Invoke-WebRequest' cmdlet (comes with PowerShell)
 # - Optionally, a module to parse JSON (e.g., 'ConvertFrom-Json')
-function Find-NearbyRailNew {
+function Find-NearbyRail {
   # Get the current location using the Geolocation API
   $GeoKey = $env:GOOGLE_GEO_API_KEY
   $response = Invoke-RestMethod -Uri "https://www.googleapis.com/geolocation/v1/geolocate?key=$GeoKey" -ContentType "application/json" -Method Post
@@ -40,10 +40,11 @@ function Find-NearbyRailNew {
   Invoke-RestMethod "https://places.googleapis.com/v1/places:searchNearby" -ContentType "application/json" -Headers $Headers -Body $Body -Method Post
   ############################
 }
+
 Write-Host "-----------------------------"
 Write-Host "Finding Nearby Rail Stations..."
 Write-Host "-----------------------------"
-$Results = Find-NearbyRailNew | ConvertTo-Json -Depth 100 | ConvertFrom-Json -Depth 100 -AsHashtable
+$Results = Find-NearbyRail | ConvertTo-Json -Depth 100 | ConvertFrom-Json -Depth 100 -AsHashtable
 $Results.places | ForEach-Object {
   $Name = $_.displayName.text
   $Type = $_.primaryTypeDisplayName.text

@@ -3,7 +3,7 @@
 # - A valid Google Maps Places API key (stored in an environment variable) --> [System.Environment]::SetEnvironmentVariable('GOOGLE_PLACES_API_KEY','YOUR_API_KEY')
 # - The 'Invoke-WebRequest' cmdlet (comes with PowerShell)
 # - Optionally, a module to parse JSON (e.g., 'ConvertFrom-Json')
-function Find-NearbyTransit {
+function Find-NearbyPharmacy {
   # Get the current location using the Geolocation API
   $GeoKey = $env:GOOGLE_GEO_API_KEY
   $response = Invoke-RestMethod -Uri "https://www.googleapis.com/geolocation/v1/geolocate?key=$GeoKey" -ContentType "application/json" -Method Post
@@ -18,7 +18,7 @@ function Find-NearbyTransit {
   }
 
   $Body = @{
-    "includedTypes" = "transit_station"
+    "includedTypes" = "pharmacy"
     "maxResultCount" = 10
     "locationRestriction" = @{
       "circle" = @{
@@ -26,7 +26,7 @@ function Find-NearbyTransit {
           "latitude" = $Latitude
           "longitude" = $Longitude
         }
-        "radius" = 5000.0
+        "radius" = 50000.0
       }
     }
   } | ConvertTo-Json -Depth 100
@@ -42,21 +42,27 @@ function Find-NearbyTransit {
 }
 
 Write-Host "-----------------------------"
-Write-Host "Finding Nearby Transit Stations..."
+Write-Host "Finding Nearby Pharmacies..."
 Write-Host "-----------------------------"
-$Results = Find-NearbyTransit | ConvertTo-Json -Depth 100 | ConvertFrom-Json -Depth 100 -AsHashtable
+$Results = Find-NearbyPharmacy | ConvertTo-Json -Depth 100 | ConvertFrom-Json -Depth 100 -AsHashtable
 $Results.places | ForEach-Object {
   $Name = $_.displayName.text
   $Type = $_.primaryTypeDisplayName.text
+  $Address = $_.formattedAddress
+  $Phone = $_.internationalPhoneNumber
   $Rating = $_.rating
   $TotalRatings = $_.userRatingCount
+  $Website = $_.websiteUri
   $GoogleMaps = $_.googleMapsUri
   $BusinessStatus = $_.businessStatus
   Write-Host "-----------------------------"
   Write-Host "Name: $Name"
   Write-Host "Type: $Type"
+  Write-Host "Address: $Address"
+  Write-Host "Phone: $Phone"
   Write-Host "Rating: $Rating"
   Write-Host "Total Ratings: $TotalRatings"
+  Write-Host "Website: $Website"
   Write-Host "Google Maps: $GoogleMaps"
   Write-Host "Business Status: $BusinessStatus"
   Write-Host "-----------------------------"
