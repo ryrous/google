@@ -37,27 +37,29 @@ function Find-NearbyTransit {
   }
   
   ############################
-  Invoke-RestMethod "https://places.googleapis.com/v1/places:searchNearby" -ContentType "application/json" -Headers $Headers -Body $Body -Method Post
+  $Results = Invoke-RestMethod "https://places.googleapis.com/v1/places:searchNearby" -ContentType "application/json" -Headers $Headers -Body $Body -Method Post | ConvertTo-Json -Depth 100 | ConvertFrom-Json -Depth 100 -AsHashtable
   ############################
-}
 
-Write-Host "-----------------------------"
-Write-Host "Finding Nearby Transit Stations..."
-Write-Host "-----------------------------"
-$Results = Find-NearbyTransit | ConvertTo-Json -Depth 100 | ConvertFrom-Json -Depth 100 -AsHashtable
-$Results.places | ForEach-Object {
-  $Name = $_.displayName.text
-  $Type = $_.primaryTypeDisplayName.text
-  $Rating = $_.rating
-  $TotalRatings = $_.userRatingCount
-  $GoogleMaps = $_.googleMapsUri
-  $BusinessStatus = $_.businessStatus
   Write-Host "-----------------------------"
-  Write-Host "Name: $Name"
-  Write-Host "Type: $Type"
-  Write-Host "Rating: $Rating"
-  Write-Host "Total Ratings: $TotalRatings"
-  Write-Host "Google Maps: $GoogleMaps"
-  Write-Host "Business Status: $BusinessStatus"
+  Write-Host "Finding Nearby Transit Stations..."
   Write-Host "-----------------------------"
+
+  $Results.places | ForEach-Object {
+    $Name = $_.displayName.text
+    $Type = $_.primaryTypeDisplayName.text
+    $Rating = $_.rating
+    $TotalRatings = $_.userRatingCount
+    $GoogleMaps = $_.googleMapsUri
+    $BusinessStatus = $_.businessStatus
+    Write-Host "-----------------------------"
+    Write-Host "Name: $Name"
+    Write-Host "Type: $Type"
+    Write-Host "Rating: $Rating"
+    Write-Host "Total Ratings: $TotalRatings"
+    Write-Host "Google Maps: $GoogleMaps"
+    Write-Host "Business Status: $BusinessStatus"
+    Write-Host "-----------------------------"
+  }
+
 }
+Find-NearbyTransit

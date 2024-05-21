@@ -29,23 +29,28 @@ function Get-AirQualityData {
   }
   
   ############################
-  Invoke-RestMethod "https://airquality.googleapis.com/v1/currentConditions:lookup" -ContentType "application/json" -Headers $Headers -Body $Body -Method Post
+  $Results = Invoke-RestMethod "https://airquality.googleapis.com/v1/currentConditions:lookup" -ContentType "application/json" -Headers $Headers -Body $Body -Method Post | ConvertTo-Json -Depth 100 | ConvertFrom-Json -Depth 100 -AsHashtable
   ############################
-}
 
-$Results = Get-AirQualityData | ConvertTo-Json -Depth 100 | ConvertFrom-Json -Depth 100 -AsHashtable
-$Results | ForEach-Object {
-  $Date = $_.dateTime
-  $Name = $_.indexes.displayName
-  $AQI = $_.indexes.aqiDisplay
-  $Category = $_.indexes.category
-  $Pollutant = $_.indexes.dominantPollutant
-  Write-Host "-----------------------------"
-  Write-Output "Air Quality Report for Date: $Date"
-  Write-Host "-----------------------------"
-  Write-Output "Name: $Name"
-  Write-Output "AQI: $AQI"
-  Write-Output "Category: $Category"
-  Write-Output "Dominant Pollutant: $Pollutant"
-  Write-Host "-----------------------------"
+  Write-Output "-----------------------------"
+  Write-Output "Getting Air Quality Data..."
+  Write-Output "-----------------------------"
+
+  $Results | ForEach-Object {
+    $Date = $_.dateTime
+    $Name = $_.indexes.displayName
+    $AQI = $_.indexes.aqiDisplay
+    $Category = $_.indexes.category
+    $Pollutant = $_.indexes.dominantPollutant
+    Write-Host "-----------------------------"
+    Write-Output "Air Quality Report for Date: $Date"
+    Write-Host "-----------------------------"
+    Write-Output "Name: $Name"
+    Write-Output "AQI: $AQI"
+    Write-Output "Category: $Category"
+    Write-Output "Dominant Pollutant: $Pollutant"
+    Write-Host "-----------------------------"
+  }
+
 }
+Get-AirQualityData
